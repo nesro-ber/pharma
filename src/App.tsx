@@ -336,16 +336,16 @@ function App() {
         <div className="mb-6">
           <p className="text-gray-600">
             {authState.isAuthenticated && 'Vos '}
-            {filteredProducts.length} produit{filteredProducts.length !== 1 ? 's' : ''} trouvé{filteredProducts.length !== 1 ? 's' : ''}
+            {safeFilteredProducts.length} produit{safeFilteredProducts.length !== 1 ? 's' : ''} trouvé{safeFilteredProducts.length !== 1 ? 's' : ''}
             {filters.searchTerm && ` pour "${filters.searchTerm}"`}
             {filters.selectedType !== 'Tous' && ` dans la catégorie "${filters.selectedType}"`}
           </p>
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {safeFilteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-            {filteredProducts.map(product => (
+            {safeFilteredProducts.map(product => (
               <ProductCard 
                 key={product.id} 
                 product={product}
