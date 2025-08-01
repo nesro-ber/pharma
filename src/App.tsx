@@ -62,18 +62,29 @@ function App() {
 
   // Safe filtered products with error handling
   const safeFilteredProducts = useMemo(() => {
-    return filteredProducts.filter(product => {
-      const matchesSearch = filters.searchTerm === '' || searchMatch(
-        filters.searchTerm,
-        product.name,
-        product.description,
-        product.pharmacyLocation || ''
-      );
-      
-      const matchesType = filters.selectedType === 'Tous' || product.type === filters.selectedType;
-      
-      return matchesSearch && matchesType;
-    });
+    try {
+      return filteredProducts.filter(product => {
+        // Ensure product and required fields exist
+        if (!product || !product.name || !product.description) {
+          return false;
+        }
+        
+        const matchesSearch = filters.searchTerm === '' || searchMatch(
+          filters.searchTerm,
+          product.name,
+          product.description,
+          product.pharmacyLocation || ''
+        );
+        
+        const matchesType = filters.selectedType === 'Tous' || product.type === filters.selectedType;
+        
+        return matchesSearch && matchesType;
+      });
+    } catch (error) {
+      console.error('Error in safe filtering:', error);
+      return filteredProducts;
+    }
+  }, [filteredProducts, filters]);
 
   const handleAddProduct = (productData: Omit<Product, 'id'>) => {
     if (!authState.pharmacy) return;
