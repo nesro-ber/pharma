@@ -9,6 +9,13 @@ interface FilterBarProps {
 const FilterBar: React.FC<FilterBarProps> = ({ selectedType, onTypeChange }) => {
   const types = ['Tous', 'Pharmaceutique', 'Parapharmaceutique', 'Cosmétique'];
 
+  const handleTypeChange = (type: string) => {
+    // Ensure we always pass a valid type
+    if (types.includes(type)) {
+      onTypeChange(type);
+    }
+  };
+
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'Pharmaceutique':
@@ -31,7 +38,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ selectedType, onTypeChange }) => 
       {types.map((type) => (
         <button
           key={type}
-          onClick={() => onTypeChange(type)}
+          onClick={() => handleTypeChange(type)}
           className={`px-3 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 border shadow-sm hover:shadow-md ${
             selectedType === type
               ? getTypeColor(type) + ' ring-2 ring-offset-2 ring-green-400 shadow-md'

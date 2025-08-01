@@ -36,19 +36,44 @@ function App() {
       productsToFilter = products.filter(product => product.pharmacyId === authState.pharmacy?.id);
     }
     
-    return productsToFilter.filter(product => {
+    try {
+      return productsToFilter.filter(product => {
+        // Ensure product and required fields exist
+        if (!product || !product.name || !product.description) {
+          return false;
+        }
+        
+        const matchesSearch = filters.searchTerm === '' || searchMatch(
+          filters.searchTerm,
+          product.name,
+          product.description,
+          product.pharmacyLocation || ''
+        );
+        
+        const matchesType = filters.selectedType === 'Tous' || product.type === filters.selectedType;
+        
+        return matchesSearch && matchesType;
+      });
+    } catch (error) {
+      console.error('Error filtering products:', error);
+      return productsToFilter;
+    }
+  }, [products, filters, authState]);
+
+  // Safe filtered products with error handling
+  const safeFilteredProducts = useMemo(() => {
+    return filteredProducts.filter(product => {
       const matchesSearch = filters.searchTerm === '' || searchMatch(
         filters.searchTerm,
         product.name,
         product.description,
-        product.pharmacyLocation
+        product.pharmacyLocation || ''
       );
       
       const matchesType = filters.selectedType === 'Tous' || product.type === filters.selectedType;
       
       return matchesSearch && matchesType;
     });
-  }, [products, filters, authState]);
 
   const handleAddProduct = (productData: Omit<Product, 'id'>) => {
     if (!authState.pharmacy) return;
@@ -310,16 +335,16 @@ function App() {
         <div className="mb-6">
           <p className="text-gray-600">
             {authState.isAuthenticated && 'Vos '}
-            {filteredProducts.length} produit{filteredProducts.length !== 1 ? 's' : ''} trouvé{filteredProducts.length !== 1 ? 's' : ''}
+            {safeFilteredProducts.length} produit{safeFilteredProducts.length !== 1 ? 's' : ''} trouvé{safeFilteredProducts.length !== 1 ? 's' : ''}
             {filters.searchTerm && ` pour "${filters.searchTerm}"`}
             {filters.selectedType !== 'Tous' && ` dans la catégorie "${filters.selectedType}"`}
           </p>
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {safeFilteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-            {filteredProducts.map(product => (
+            {safeFilteredProducts.map(product => (
               <ProductCard 
                 key={product.id} 
                 product={product}

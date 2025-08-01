@@ -238,24 +238,6 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </div>
           </div>
 
-          {/* Action Button */}
-          {!isOwner && (
-            <div className="mt-8 pt-6 border-t border-gray-200">
-              <button 
-                className={`w-full py-3 px-6 rounded-xl font-medium transition-all duration-200 shadow-md ${
-                  product.inStock 
-                    ? 'bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 hover:shadow-lg' 
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-                disabled={!product.inStock}
-              >
-                {product.inStock 
-                  ? 'Contacter la pharmacie' 
-                  : 'Produit indisponible'
-                }
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
